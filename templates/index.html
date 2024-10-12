@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Market News Sentiment Analysis</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Market News Sentiment Analysis</h1>
+        <h2>Headlines</h2>
+        <ul>
+            {% for headline in headlines %}
+                <li>{{ headline }}</li>
+            {% endfor %}
+        </ul>
+
+        <h2>Detailed Sentiment Analysis</h2>
+        <ul>
+            {% for item in analysis %}
+                <li>
+                    <strong>{{ item.headline }}</strong>: 
+                    Sentiment: {{ "Positive" if item.polarity > 0 else "Negative" if item.polarity < 0 else "Neutral" }} (Polarity: {{ item.polarity }})
+                </li>
+            {% endfor %}
+        </ul>
+
+        <h2>Market Opinion</h2>
+        <p>{{ opinion }}</p>
+    </div>
+</body>
+</html>
