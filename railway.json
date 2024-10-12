@@ -1,0 +1,14 @@
+{
+    "build": {
+        "dockerfile": "Dockerfile"
+    },
+    "deploy": {
+        "production": {
+            "image": "python:3.8",
+            "environment": {
+                "FLASK_APP": "app.py",
+                "FLASK_ENV": "production"
+            }
+        }
+    }
+}
