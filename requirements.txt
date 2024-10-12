@@ -82,3 +82,9 @@ Werkzeug==3.0.4
 wheel==0.44.0
 wrapt==1.16.0
 xgboost==2.1.1
+Flask==2.3.3
+requests==2.31.0
+beautifulsoup4==4.12.2
+textblob==0.17.1
+feedparser==6.0.8
+
