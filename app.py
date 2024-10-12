@@ -17,7 +17,7 @@ app = Flask(__name__)
 
 def fetch_news_rss():
     # Fetch RSS feed from MarketWatch
-    feed_url = 'https://feeds.content.dowjones.io/public/rss/mw_realtimeheadlines'
+    feed_url = 'https://cointelegraph.com/rss'
     feed = feedparser.parse(feed_url)
     news_headlines = []
 
@@ -29,7 +29,7 @@ def fetch_news_rss():
 
 def fetch_news_web():
     # Web scrape headlines from Bloomberg stock market page
-    url = 'https://www.bloomberg.com/markets/stocks'
+    url = 'https://cointelegraph.com/tags/bitcoin'
     response = requests.get(url)
     soup = BeautifulSoup(response.text, 'html.parser')
 
