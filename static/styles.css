@@ -1,32 +1,74 @@
 body {
-    background-color: #1e1e1e;
-    color: #f8f8f2;
     font-family: Arial, sans-serif;
+    margin: 0;
+    background-color: #121212;
+    color: #eaeaea;
     line-height: 1.6;
+}
+
+header {
+    background-color: #1f1f1f;
+    padding: 20px;
+    text-align: center;
+}
+
+h1 {
+    margin: 0;
+}
+
+main {
     padding: 20px;
 }
 
-h1, h2, h3 {
-    color: #66d9ef;
+.summary {
+    background-color: #1f1f1f;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
 }
 
-.container {
-    max-width: 800px;
-    margin: auto;
-    padding: 20px;
-    border-radius: 8px;
-    background-color: #2e2e2e;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+.charts {
+    margin-bottom: 20px;
+}
+
+.headlines, .detailed-analysis {
+    background-color: #1f1f1f;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
 }
 
 ul {
-    list-style-type: none;
+    list-style: none;
     padding: 0;
 }
 
-li {
-    margin: 10px 0;
+ul li {
+    padding: 5px;
+    border-bottom: 1px solid #444;
+}
+
+footer {
+    text-align: center;
     padding: 10px;
-    background-color: #444;
-    border-radius: 5px;
+    background-color: #1f1f1f;
+}
+
+footer p {
+    margin: 0;
+}
+
+/* Responsive Styles */
+@media (max-width: 600px) {
+    body {
+        padding: 10px;
+    }
+    
+    h1, h2 {
+        font-size: 1.5em;
+    }
+    
+    .charts {
+        padding: 10px;
+    }
 }
