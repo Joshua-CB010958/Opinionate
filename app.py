@@ -1,23 +1,14 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 import requests
 from bs4 import BeautifulSoup
 from textblob import TextBlob
 import feedparser
-import nltk
-
-# Download stopwords if not already downloaded
-try:
-    nltk.data.find('corpora/stopwords')
-except LookupError:
-    nltk.download('stopwords')
-
-from nltk.corpus import stopwords
 
 app = Flask(__name__)
 
 def fetch_news_rss():
     # Fetch RSS feed from MarketWatch
-    feed_url = 'https://cointelegraph.com/rss'
+    feed_url = 'https://cointelegraph.com/rss/category/market-analysis'
     feed = feedparser.parse(feed_url)
     news_headlines = []
 
@@ -27,13 +18,12 @@ def fetch_news_rss():
     
     return news_headlines
 
-def fetch_news_web():
-    # Web scrape headlines from Bloomberg stock market page
-    url = 'https://cointelegraph.com/tags/bitcoin'
+def fetch_news_web(url):
+    # Web scrape headlines from the provided URL
     response = requests.get(url)
     soup = BeautifulSoup(response.text, 'html.parser')
 
-    # Find headline elements (Bloomberg typically uses h1 for stock headlines)
+    # Find headline elements (assumed to be <h1> for demonstration; update as needed)
     headlines = soup.find_all('h1')
 
     news_headlines = [headline.text.strip() for headline in headlines]
@@ -60,22 +50,32 @@ def analyze_sentiment(headlines):
     return avg_polarity, detailed_analysis
 
 @app.route('/')
-def index():
-    # Fetch headlines and analyze sentiment
-    rss_headlines = fetch_news_rss()
-    web_headlines = fetch_news_web()
-    all_headlines = rss_headlines + web_headlines
-    avg_sentiment, detailed_analysis = analyze_sentiment(all_headlines)
+def landing():
+    return render_template('landing.html')
 
-    # Prepare market opinion
-    if avg_sentiment > 0.1:
-        market_opinion = "Today's market sentiment is likely optimistic."
-    elif avg_sentiment < -0.1:
-        market_opinion = "Today's market sentiment seems bearish."
-    else:
-        market_opinion = "Today's market sentiment appears neutral."
+@app.route('/analyze', methods=['POST'])
+def analyze():
+    # Get the URL from the form submission
+    url = request.form['url']
+    try:
+        # Fetch RSS headlines and web headlines from the provided URL
+        rss_headlines = fetch_news_rss()
+        web_headlines = fetch_news_web(url)  # Use the user-provided URL
+        all_headlines = rss_headlines + web_headlines
+        avg_sentiment, detailed_analysis = analyze_sentiment(all_headlines)
 
-    return render_template('index.html', headlines=all_headlines, analysis=detailed_analysis, opinion=market_opinion)
+        # Prepare market opinion
+        if avg_sentiment > 0.1:
+            market_opinion = "Today's market sentiment is likely optimistic."
+        elif avg_sentiment < -0.1:
+            market_opinion = "Today's market sentiment seems bearish."
+        else:
+            market_opinion = "Today's market sentiment appears neutral."
+
+        return render_template('index.html', headlines=all_headlines, analysis=detailed_analysis, opinion=market_opinion)
+
+    except Exception as e:
+        return render_template('error.html', error=str(e))
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)  # Allows access from any IP address
