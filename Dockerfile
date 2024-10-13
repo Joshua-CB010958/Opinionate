@@ -18,4 +18,4 @@ RUN python -m spacy download en_core_web_sm
 COPY . .
 
 # Set the command to run your Flask application
-CMD ["python", "your_flask_app.py"]
+CMD ["python", "app.py"]
