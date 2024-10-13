@@ -102,7 +102,7 @@ def analyze():
 
 if __name__ == "__main__":
     print("Starting the application...")
-    if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000)  # Allows access from any IP address
+    app.run(host="0.0.0.0", port=5000, debug=False)  # Ensure debug is set to False
+
 
 
