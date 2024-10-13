@@ -1,23 +1,27 @@
-# Use the official Python image from Docker Hub with Python 3.9
+# Start with a lightweight Python image that includes necessary libraries
 FROM python:3.9-slim
 
-# Set the working directory
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
+# Set the working directory inside the container
 WORKDIR /app
 
-# Copy the requirements.txt file first to cache dependencies
+# Copy requirements.txt first to leverage Docker cache and install dependencies
 COPY requirements.txt .
 
-# Install the dependencies
+# Install dependencies from requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Pre-download the SpaCy model
+# Pre-download the SpaCy model for faster builds
 RUN python -m spacy download en_core_web_sm
 
-# Copy the rest of the application files
+# Copy the rest of the application code to the working directory
 COPY . .
 
-# Expose the port Flask runs on
+# Expose the port the Flask app will run on
 EXPOSE 5000
 
-# Set the command to run the application
+# Command to run the Flask app
 CMD ["python", "app.py"]
