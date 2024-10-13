@@ -20,4 +20,4 @@ RUN . venv/bin/activate && pip install -r requirements.txt
 COPY . .
 
 # Set the entry point for the container
-CMD ["venv/bin/python", "app.py"]
+CMD ["python", "app.py"]
