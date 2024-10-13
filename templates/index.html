@@ -7,11 +7,25 @@
     <title>Article Summary</title>
 </head>
 <body>
-    <h1>{{ title }}</h1>
-    <h2>{{ heading }}</h2> <!-- New heading to support sentiment -->
-    <p>{{ sentiment }}</p>
-    <h3>Summary:</h3>
-    <p>{{ summary }}</p>
-    <a href="/">Analyze another URL</a>
+    <nav>
+        <div class="logo-container">
+            <img src="../static/images/OPINIONATE LOGO.png" alt="Logo" class="logo">
+        </div>
+    </nav>
+    
+    <main>
+        <div class="container"> <!-- Main content container -->
+            <h1>{{ title }}</h1>
+            <h2>{{ heading }}</h2> <!-- New heading to support sentiment -->
+            <p>{{ sentiment }}</p>
+            <h3>Summary:</h3>
+            <p>{{ summary }}</p>
+            <a href="/">Analyze another URL</a>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 OPINIONATE. All rights reserved.</p>
+    </footer>
 </body>
 </html>
