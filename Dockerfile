@@ -8,14 +8,14 @@ WORKDIR /app
 COPY requirements.txt .
 
 # Install virtualenv
-RUN pip install --no-cache-dir virtualenv
+RUN pip install --upgrade pip && \
+    pip install virtualenv
 
-# Create and activate virtual environment
+# Create a virtual environment
 RUN virtualenv venv
-ENV PATH="/app/venv/bin:$PATH"
 
-# Install dependencies in the virtual environment
-RUN pip install --upgrade pip && pip install--no-cache-dir -r requirements.txt
+# Activate the virtual environment and install the dependencies
+RUN . venv/bin/activate && pip install --no-cache-dir -r requirements.txt
 
 # Copy the rest of the application files
 COPY . .
@@ -27,4 +27,4 @@ ENV FLASK_APP=app.py
 EXPOSE 5000
 
 # Set the command to run the application
-CMD ["flask", "run", "--host=0.0.0.0", "--port=5000"]
+CMD ["venv/bin/python", "-m", "flask", "run", "--host=0.0.0.0", "--port=5000"]
