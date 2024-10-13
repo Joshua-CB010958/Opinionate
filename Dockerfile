@@ -13,8 +13,8 @@ RUN pip install --upgrade pip && pip install virtualenv
 # Create a virtual environment
 RUN virtualenv venv
 
-# Activate the virtual environment and install dependencies
-RUN . venv/bin/activate && pip install -r requirements.txt
+# Activate the virtual environment and install dependencies, suppressing warnings
+RUN . venv/bin/activate && pip install --root-user-action=ignore -r requirements.txt
 
 # Download the spaCy model
 RUN . venv/bin/activate && python -m spacy download en_core_web_sm
