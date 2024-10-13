@@ -10,11 +10,14 @@ COPY requirements.txt .
 # Upgrade pip and install dependencies
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
+# Download the spaCy model
+RUN python -m spacy download en_core_web_sm
+
 # Copy the download script to download the spaCy model
 COPY download_model.py .
 
-# Run the model download script
-RUN python download_model.py
+# Temporarily comment out the script execution
+# RUN python download_model.py
 
 # Copy the rest of your application files
 COPY . .
