@@ -1,27 +1,28 @@
-# Start with a lightweight Python image that includes necessary libraries
-FROM python:3.9-slim
+# Dockerfile
 
-# Set environment variables
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
+# Use an official Python runtime as a parent image
+FROM python:3.9
 
-# Set the working directory inside the container
+# Set the working directory in the container
 WORKDIR /app
 
-# Copy requirements.txt first to leverage Docker cache and install dependencies
-COPY requirements.txt .
+# Copy the current directory contents into the container at /app
+COPY . /app
+
+# Upgrade pip
+RUN pip install --upgrade pip
 
 # Install dependencies from requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Pre-download the SpaCy model for faster builds
+# Download spaCy model
 RUN python -m spacy download en_core_web_sm
 
-# Copy the rest of the application code to the working directory
-COPY . .
-
-# Expose the port the Flask app will run on
+# Make port 5000 available to the world outside this container
 EXPOSE 5000
 
-# Command to run the Flask app
+# Define environment variable
+ENV NAME World
+
+# Run app.py when the container launches
 CMD ["python", "app.py"]
