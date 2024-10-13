@@ -100,6 +100,7 @@ def analyze():
     except Exception as e:
         return render_template('error.html', error=str(e))
 
-if __name__ == '__main__':
-    app.run(debug=True)
-    load_model()
+if __name__ == "__main__":
+    print("Starting the application...")
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+
