@@ -2,52 +2,57 @@ from flask import Flask, render_template, request
 import requests
 from bs4 import BeautifulSoup
 from textblob import TextBlob
-import feedparser
+import spacy
 
 app = Flask(__name__)
 
-def fetch_news_rss():
-    # Fetch RSS feed from MarketWatch
-    feed_url = 'https://cointelegraph.com/rss/category/market-analysis'
-    feed = feedparser.parse(feed_url)
-    news_headlines = []
+# Load the spaCy language model
+nlp = spacy.load("en_core_web_sm")
 
-    # Extract headlines from RSS feed
-    for entry in feed.entries:
-        news_headlines.append(entry.title)
+def fetch_article_content(url):
+    try:
+        # Set a user-agent header to mimic a browser request
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.85 Safari/537.36"
+        }
+
+        # Web scrape the article from the provided URL
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()  # Raise an error for bad responses
+        soup = BeautifulSoup(response.text, 'html.parser')
+
+        # Extract the main content (update the selectors based on the website structure)
+        title = soup.find('h1').text.strip() if soup.find('h1') else 'No Title Found'
+        paragraphs = soup.find_all('p')
+        content = ' '.join([para.text.strip() for para in paragraphs if para.text.strip()])
+
+        if not content:
+            return title, "No content found in the article."
+
+        return title, content
+    except Exception as e:
+        return "Error", str(e)
+
+
+def analyze_sentiment(text):
+    analysis = TextBlob(text)
+    polarity = analysis.sentiment.polarity  # -1 to +1 (negative to positive)
+    return polarity
+
+def get_summary(text):
+    # Generate a summary of the content using spaCy
+    doc = nlp(text)
+    sentences = list(doc.sents)
+
+    # Get the top sentences based on their importance
+    if len(sentences) <= 2:
+        return text  # Return full text if too short
+
+    # Select the most important sentences (e.g., first 2 sentences for brevity)
+    summary_sentences = sentences[:2]
+    summary = ' '.join([sent.text for sent in summary_sentences])
     
-    return news_headlines
-
-def fetch_news_web(url):
-    # Web scrape headlines from the provided URL
-    response = requests.get(url)
-    soup = BeautifulSoup(response.text, 'html.parser')
-
-    # Find headline elements (assumed to be <h1> for demonstration; update as needed)
-    headlines = soup.find_all('h1')
-
-    news_headlines = [headline.text.strip() for headline in headlines]
-    return news_headlines
-
-def analyze_sentiment(headlines):
-    polarity_scores = []
-    detailed_analysis = []
-    
-    # Analyze sentiment of each headline
-    for headline in headlines:
-        analysis = TextBlob(headline)
-        polarity = analysis.sentiment.polarity  # -1 to +1 (negative to positive)
-        polarity_scores.append(polarity)
-        # Append detailed analysis for each headline
-        detailed_analysis.append({
-            'headline': headline,
-            'polarity': polarity
-        })
-    
-    # Calculate average sentiment
-    avg_polarity = sum(polarity_scores) / len(polarity_scores) if polarity_scores else 0
-    
-    return avg_polarity, detailed_analysis
+    return summary
 
 @app.route('/')
 def landing():
@@ -58,21 +63,31 @@ def analyze():
     # Get the URL from the form submission
     url = request.form['url']
     try:
-        # Fetch RSS headlines and web headlines from the provided URL
-        rss_headlines = fetch_news_rss()
-        web_headlines = fetch_news_web(url)  # Use the user-provided URL
-        all_headlines = rss_headlines + web_headlines
-        avg_sentiment, detailed_analysis = analyze_sentiment(all_headlines)
+        # Fetch article title and content from the provided URL
+        title, content = fetch_article_content(url)
 
-        # Prepare market opinion
+        # Check if there was an error fetching content
+        if content.startswith("Error"):
+            raise ValueError(content)
+
+        if not content or 'No Title Found' in title:
+            raise ValueError("No valid content found at the provided URL.")
+
+        # Analyze sentiment of the full content
+        avg_sentiment = analyze_sentiment(content)
+
+        # Get summary of the content
+        summary = get_summary(content)
+
+        # Prepare daily summary based on sentiment
         if avg_sentiment > 0.1:
-            market_opinion = "Today's market sentiment is likely optimistic."
+            daily_summary = "Today's summary indicates a positive sentiment in the news articles."
         elif avg_sentiment < -0.1:
-            market_opinion = "Today's market sentiment seems bearish."
+            daily_summary = "Today's summary indicates a negative sentiment in the news articles."
         else:
-            market_opinion = "Today's market sentiment appears neutral."
+            daily_summary = "Today's summary indicates a neutral sentiment in the news articles."
 
-        return render_template('index.html', headlines=all_headlines, analysis=detailed_analysis, opinion=market_opinion)
+        return render_template('index.html', title=title, summary=summary, sentiment=daily_summary)
 
     except Exception as e:
         return render_template('error.html', error=str(e))
