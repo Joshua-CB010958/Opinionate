@@ -5,13 +5,22 @@ from textblob import TextBlob
 import spacy
 from spacy.cli import download
 
-# Try to load the spaCy model
-try:
-    nlp = spacy.load("en_core_web_sm")
-except OSError:
-    # If the model is not found, download it
-    download("en_core_web_sm")
-    nlp = spacy.load("en_core_web_sm")
+def download_model():
+    try:
+        spacy.cli.download("en_core_web_sm")
+    except Exception as e:
+        print(f"Error downloading model: {e}")
+
+def load_model():
+    try:
+        nlp = spacy.load("en_core_web_sm")
+        print("spaCy model loaded successfully.")
+    except OSError:
+        print("Model not found, downloading...")
+        download_model()
+        nlp = spacy.load("en_core_web_sm")
+        print("spaCy model downloaded and loaded successfully.")
+    return nlp
 
 
 app = Flask(__name__)
@@ -103,4 +112,5 @@ def analyze():
         return render_template('error.html', error=str(e))
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)  # Allows access from any IP address
+    app.run(debug=True)
+    load_model()
