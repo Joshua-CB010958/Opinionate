@@ -1,23 +1,23 @@
-# Use the official Python image
-FROM python:3.8
+# Use the official Python image from the Docker Hub with Python 3.8
+FROM python:3.8-slim
 
 # Set the working directory
 WORKDIR /app
 
-# Copy the requirements file first for better caching
+# Copy requirements file
 COPY requirements.txt .
 
-# Install virtualenv
-RUN pip install --upgrade pip && pip install virtualenv
+# Install the dependencies
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Create a virtual environment
-RUN virtualenv venv
-
-# Install dependencies inside the virtual environment
-RUN . venv/bin/activate && pip install -r requirements.txt
-
-# Copy the rest of your application files
+# Copy the rest of the application
 COPY . .
 
-# Set the entry point for the container
-CMD ["python", "app.py"]
+# Set environment variable for Flask
+ENV FLASK_APP=app.py
+
+# Expose the port Flask runs on
+EXPOSE 5000
+
+# Set the command to run the application
+CMD ["flask", "run", "--host=0.0.0.0", "--port=5000"]
