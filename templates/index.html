@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/styles.css">
+    <title>Analysis Results</title>
+</head>
+<body>
+    <h1>News Sentiment Analysis Results</h1>
+    <h2>Market Opinion: {{ opinion }}</h2>
+    <a href="/">Analyze another URL</a>
+    <h3>Headlines:</h3>
+    <ul>
+        {% for headline in headlines %}
+            <li>{{ headline }}</li>
+        {% endfor %}
+    </ul>
+    <h3>Detailed Analysis:</h3>
+    <ul>
+        {% for item in analysis %}
+            <li>{{ item.headline }} - Polarity: {{ item.polarity }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
