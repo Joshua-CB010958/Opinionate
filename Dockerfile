@@ -1,21 +1,23 @@
-# Use the official Python 3.8 image
-FROM python:3.8-slim
+# Use the official Python image
+FROM python:3.8
 
-# Set the working directory in the container
+# Set the working directory
 WORKDIR /app
 
-# Copy requirements.txt first to leverage Docker caching
+# Copy the requirements file first for better caching
 COPY requirements.txt .
 
-# Upgrade pip and install dependencies
-RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+# Install virtualenv
+RUN pip install --upgrade pip && pip install virtualenv
 
-# Download the spaCy model
-RUN python -m spacy download en_core_web_sm
+# Create a virtual environment
+RUN virtualenv venv
+
+# Install dependencies inside the virtual environment
+RUN . venv/bin/activate && pip install -r requirements.txt
 
 # Copy the rest of your application files
 COPY . .
 
-# Set the command to run your Flask application
-CMD ["python", "app.py"]
+# Set the entry point for the container
+CMD ["venv/bin/python", "app.py"]
