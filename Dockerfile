@@ -4,6 +4,9 @@ FROM python:3.8
 # Set the working directory in the container
 WORKDIR /app
 
+# Copy requirements.txt first
+COPY requirements.txt ./
+
 # Install virtualenv
 RUN pip install --upgrade pip && pip install virtualenv
 
