@@ -4,23 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../static/styles.css">
-    <title>Analysis Results</title>
+    <title>Article Summary</title>
 </head>
 <body>
-    <h1>News Sentiment Analysis Results</h1>
-    <h2>Market Opinion: {{ opinion }}</h2>
+    <h1>{{ title }}</h1>
+    <h2>{{ heading }}</h2> <!-- New heading to support sentiment -->
+    <p>{{ sentiment }}</p>
+    <h3>Summary:</h3>
+    <p>{{ summary }}</p>
     <a href="/">Analyze another URL</a>
-    <h3>Headlines:</h3>
-    <ul>
-        {% for headline in headlines %}
-            <li>{{ headline }}</li>
-        {% endfor %}
-    </ul>
-    <h3>Detailed Analysis:</h3>
-    <ul>
-        {% for item in analysis %}
-            <li>{{ item.headline }} - Polarity: {{ item.polarity }}</li>
-        {% endfor %}
-    </ul>
 </body>
 </html>
