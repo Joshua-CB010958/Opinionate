@@ -5,6 +5,10 @@ from textblob import TextBlob
 
 app = Flask(__name__)
 
+# Define positive and negative keywords
+positive_keywords = ['good', 'great', 'positive', 'improved', 'success', 'benefit', 'advantage', 'achievement', 'hope', 'rise']
+negative_keywords = ['bad', 'poor', 'negative', 'declined', 'failure', 'disadvantage', 'crisis', 'struggle', 'drop', 'loss', 'below']
+
 def fetch_article_content(url):
     try:
         # Set a user-agent header to mimic a browser request
@@ -32,14 +36,41 @@ def fetch_article_content(url):
 def analyze_sentiment(text):
     analysis = TextBlob(text)
     polarity = analysis.sentiment.polarity  # -1 to +1 (negative to positive)
+
+    # Adjust sentiment score based on keywords
+    for word in positive_keywords:
+        if word in text.lower():
+            polarity += 0.1  # Increase score for positive words
+    for word in negative_keywords:
+        if word in text.lower():
+            polarity -= 0.1  # Decrease score for negative words
+
+    # Ensure the polarity score stays within the range of -1 to +1
+    polarity = max(-1, min(1, polarity))
+
     return polarity
 
 def get_summary(text):
-    # Use TextBlob's noun phrase extraction for a basic summary
+    # Use TextBlob's sentence tokenization
     blob = TextBlob(text)
-    summary = ' '.join(blob.noun_phrases[:5])  # Extract the top 5 noun phrases
-    if not summary:
-        return text[:250] + '...'  # Fallback to a trimmed version if no noun phrases
+    sentences = blob.sentences
+    
+    # If there are fewer than 5 sentences, return the original text trimmed
+    if len(sentences) <= 5:
+        return text[:250] + '...'  # Fallback to a trimmed version if too short
+
+    # Create a simple ranking based on sentence polarity and length
+    sentence_scores = {}
+    for sentence in sentences:
+        sentence_scores[sentence] = sentence.sentiment.polarity * len(sentence)
+
+    # Sort sentences by their score
+    sorted_sentences = sorted(sentence_scores, key=sentence_scores.get, reverse=True)
+
+    # Select top sentences for the summary
+    summary_sentences = sorted_sentences[:5]  # Get top 5 sentences
+    summary = ' '.join(str(sent) for sent in summary_sentences)
+
     return summary
 
 @app.route('/')
