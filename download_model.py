@@ -1,5 +1,16 @@
 import spacy
 from spacy.cli import download
+from pydantic import BaseModel
+from typing import List, Optional
+
+class ModelData(BaseModel):
+    name: str
+    value: Optional[int] = None
+
+def main():
+    data = ModelData(name="Example", value=10)
+    print(data)
+
 
 def download_model():
     try:
@@ -20,3 +31,4 @@ def load_model():
 
 if __name__ == "__main__":
     load_model()
+    main()
