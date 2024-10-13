@@ -3,18 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../static/stylelanding.css">
-    <title>News Sentiment Analyzer</title>
+    <link rel="stylesheet" href="../static/styles.css">
+    <title>Article Summary</title>
 </head>
 <body>
-    <div class="container">
-        <h1>Financial News analyzer</h1>
-        <p>Paste a News link that you would like to analyze today</p>
-        <form action="/analyze" method="POST">
-            <label for="url">Enter URL to analyze:</label>
-            <input type="text" id="url" name="url" required>
-            <button type="submit">Analyze</button>
-        </form>
-    </div>
+    <nav>
+        <div class="logo-container">
+            <img src="../static/images/OPINIONATE LOGO.png" alt="Logo" class="logo">
+        </div>
+    </nav>
+    
+    <main>
+        <div class="container"> <!-- Main content container -->
+            <h1>{{ title }}</h1>
+            <h2>{{ heading }}</h2> <!-- New heading to support sentiment -->
+            <p>{{ sentiment }}</p>
+            <h3>Summary:</h3>
+            <p>{{ summary }}</p>
+            <a href="/">Analyze another URL</a>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 OPINIONATE. All rights reserved.</p>
+    </footer>
 </body>
 </html>
