@@ -5,12 +5,14 @@ from textblob import TextBlob
 import spacy
 from spacy.cli import download
 
-# Download the model if it's not already installed
+# Try to load the spaCy model
 try:
     nlp = spacy.load("en_core_web_sm")
 except OSError:
+    # If the model is not found, download it
     download("en_core_web_sm")
     nlp = spacy.load("en_core_web_sm")
+
 
 app = Flask(__name__)
 
