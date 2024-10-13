@@ -7,12 +7,10 @@ WORKDIR /app
 # Copy requirements file
 COPY requirements.txt .
 
-# Install virtualenv and create a virtual environment
-RUN pip install --no-cache-dir virtualenv && \
-    virtualenv venv
-
-# Activate the virtual environment and install the dependencies
-RUN . venv/bin/activate && pip install --no-cache-dir -r requirements.txt
+# Install the dependencies in a virtual environment
+RUN python -m venv venv && \
+    . venv/bin/activate && \
+    pip install --no-cache-dir -r requirements.txt
 
 # Copy the rest of the application
 COPY . .
