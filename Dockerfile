@@ -10,8 +10,9 @@ COPY . /app
 # Install any dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Download TextBlob corpora
+# Download TextBlob corpora and NLTK data
 RUN python -m textblob.download_corpora
+RUN python -c "import nltk; nltk.download('punkt'); nltk.download('punkt_tab')"
 
 # Expose the port the app runs on
 EXPOSE 5000
