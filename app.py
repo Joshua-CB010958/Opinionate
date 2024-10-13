@@ -2,20 +2,8 @@ from flask import Flask, render_template, request
 import requests
 from bs4 import BeautifulSoup
 from textblob import TextBlob
-import spacy
-from spacy.cli import download
-
-try:
-    nlp = spacy.load("en_core_web_sm")
-except OSError:
-    download("en_core_web_sm")
-    nlp = spacy.load("en_core_web_sm")
-
 
 app = Flask(__name__)
-
-# Load the spaCy language model
-nlp = spacy.load("en_core_web_sm")
 
 def fetch_article_content(url):
     try:
@@ -41,25 +29,17 @@ def fetch_article_content(url):
     except Exception as e:
         return "Error", str(e)
 
-
 def analyze_sentiment(text):
     analysis = TextBlob(text)
     polarity = analysis.sentiment.polarity  # -1 to +1 (negative to positive)
     return polarity
 
 def get_summary(text):
-    # Generate a summary of the content using spaCy
-    doc = nlp(text)
-    sentences = list(doc.sents)
-
-    # Get the top sentences based on their importance
-    if len(sentences) <= 2:
-        return text  # Return full text if too short
-
-    # Select the most important sentences (e.g., first 2 sentences for brevity)
-    summary_sentences = sentences[:2]
-    summary = ' '.join([sent.text for sent in summary_sentences])
-    
+    # Use TextBlob's noun phrase extraction for a basic summary
+    blob = TextBlob(text)
+    summary = ' '.join(blob.noun_phrases[:5])  # Extract the top 5 noun phrases
+    if not summary:
+        return text[:250] + '...'  # Fallback to a trimmed version if no noun phrases
     return summary
 
 @app.route('/')
@@ -101,8 +81,4 @@ def analyze():
         return render_template('error.html', error=str(e))
 
 if __name__ == "__main__":
-    print("Starting the application...")
-    app.run(host="0.0.0.0", port=5000, debug=False)  # Ensure debug is set to False
-
-
-
+    app.run(host="0.0.0.0", port=5000, debug=False)
