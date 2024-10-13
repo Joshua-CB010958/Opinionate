@@ -11,7 +11,7 @@ COPY requirements.txt .
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
 # Copy the download script to download the spaCy model
-COPY download_model.py .
+COPY download_model.py .  # Ensure this file exists in the build context
 
 # Download the spaCy model
 RUN python download_model.py
